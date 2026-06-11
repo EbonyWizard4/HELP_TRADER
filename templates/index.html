@@ -20,41 +20,45 @@
             </button>
         </form>
 
-        {% if resultado %}
-        <div class="space-y-4 border-t border-slate-700 pt-6 animate-fade-in">
-            <h2 class="text-xl font-bold text-slate-300 mb-4">Resultados do Período:</h2>
+{% if resultado %}
+        <div class="space-y-4 border-t border-slate-700 pt-6">
+            <h2 class="text-xl font-bold text-slate-300 mb-4">Métricas do Mercado (30 dias):</h2>
             
-            <div class="grid grid-cols-2 gap-4">
+            <div class="grid grid-cols-2 gap-4 mb-6">
                 <div class="bg-slate-800/50 p-4 rounded-xl border border-slate-700/50">
-                    <span class="block text-xs text-slate-400 uppercase tracking-wider">Candles Processados</span>
+                    <span class="block text-xs text-slate-400 uppercase tracking-wider">Candles de 5m</span>
                     <span class="text-xl font-mono font-bold text-blue-400">{{ resultado.total_candles }}</span>
                 </div>
-
                 <div class="bg-slate-800/50 p-4 rounded-xl border border-slate-700/50">
-                    <span class="block text-xs text-slate-400 uppercase tracking-wider">Tendência</span>
+                    <span class="block text-xs text-slate-400 uppercase tracking-wider">Tendência Macro</span>
                     <span class="text-xl font-bold {% if resultado.tendencia == 'Alta' %}text-emerald-400{% else %}text-rose-400{% endif %}">
-                        {{ resultado.tendencia }}
+                        {{ resultado.tendencia }} ({{ resultado.variacao_pontos }} pts)
                     </span>
                 </div>
+            </div>
 
-                <div class="bg-slate-800/50 p-4 rounded-xl border border-slate-700/50">
-                    <span class="block text-xs text-slate-400 uppercase tracking-wider">Abertura do Período</span>
-                    <span class="text-lg font-mono font-semibold">{{ resultado.abertura_inicial }} pts</span>
+            <h2 class="text-xl font-bold text-slate-300 mb-4 border-t border-slate-700/50 pt-4">Desempenho do Setup 9.1 (Compra):</h2>
+
+            <div class="grid grid-cols-3 gap-3">
+                <div class="bg-slate-800/50 p-3 rounded-xl border border-slate-700/50 text-center">
+                    <span class="block text-xs text-slate-400 uppercase tracking-wider">Sinais</span>
+                    <span class="text-lg font-mono font-bold text-slate-200">{{ resultado.total_sinais }}</span>
                 </div>
-
-                <div class="bg-slate-800/50 p-4 rounded-xl border border-slate-700/50">
-                    <span class="block text-xs text-slate-400 uppercase tracking-wider">Fechamento do Período</span>
-                    <span class="text-lg font-mono font-semibold">{{ resultado.fechamento_final }} pts</span>
+                <div class="bg-slate-800/50 p-3 rounded-xl border border-slate-700/50 text-center">
+                    <span class="block text-xs text-slate-400 uppercase tracking-wider">Gain ✔</span>
+                    <span class="text-lg font-mono font-bold text-emerald-400">{{ resultado.gains }}</span>
+                </div>
+                <div class="bg-slate-800/50 p-3 rounded-xl border border-slate-700/50 text-center">
+                    <span class="block text-xs text-slate-400 uppercase tracking-wider">Loss ✖</span>
+                    <span class="text-lg font-mono font-bold text-rose-400">{{ resultado.losses }}</span>
                 </div>
             </div>
 
-            <div class="mt-4 p-4 rounded-xl text-center font-bold {% if resultado.variacao_pontos >= 0 %}bg-emerald-950/40 text-emerald-300 border border-emerald-500/30{% else %}bg-rose-950/40 text-rose-300 border border-rose-500/30{% endif %}">
-                Saldo do Período: {{ resultado.variacao_pontos }} pontos
+            <div class="mt-4 p-4 rounded-xl text-center font-bold bg-slate-900 border border-blue-500/30">
+                Taxa de Acerto do Setup: <span class="text-blue-400 font-mono text-xl">{{ resultado.taxa_acerto }}%</span>
             </div>
         </div>
-        {% elif resultado == None and request.method == 'POST' %}
-        <p class="text-center text-rose-400 font-medium">Nenhum dado encontrado para o período ou falha na API do Yahoo.</p>
-        {% endif %}
+        {% endif %}    
     </div>
 
 </body>

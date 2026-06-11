@@ -1,5 +1,5 @@
-from flask import Flask, render_template, request, redirect, url_url_for
-from analizador import analizar_miniindice
+from flask import Flask, render_template, request, redirect, url_for
+from analizador import analisar_mini_indice
 
 app = Flask(__name__)
 
@@ -9,7 +9,7 @@ def index():
 
     if request.method == 'POST':
         # Quando o botão for clicado, executa a função de análise
-        dados_analise = analizar_miniindice()
+        dados_analise = analisar_mini_indice()
     return render_template('index.html', resultado=dados_analise)
 
 if __name__ == '__main__':
