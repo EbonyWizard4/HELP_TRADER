@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trade Analytics Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-slate-900 text-slate-100 font-sans min-h-screen flex flex-col items-center justify-center p-6">
+
+    <div class="w-full max-w-xl bg-slate-800 p-8 rounded-2xl shadow-2xl border border-slate-700">
+        <h1 class="text-3xl font-extrabold text-center mb-2 bg-gradient-to-r from-blue-400 to-emerald-400 bg-clip-text text-transparent">
+            Analisador de Dados Intraday
+        </h1>
+        <p class="text-slate-400 text-center text-sm mb-8">Mini Índice (WIN=F) • Janela de 30 dias (Intervalo 5m)</p>
+
+        <form method="POST" class="flex justify-center mb-8">
+            <button type="submit" class="w-full sm:w-auto bg-blue-600 hover:bg-blue-500 text-white font-bold px-8 py-3 rounded-xl transition-all transform hover:scale-[1.02] active:scale-[0.98] shadow-lg shadow-blue-600/30">
+                Iniciar Análise Histórica
+            </button>
+        </form>
+
+        {% if resultado %}
+        <div class="space-y-4 border-t border-slate-700 pt-6 animate-fade-in">
+            <h2 class="text-xl font-bold text-slate-300 mb-4">Resultados do Período:</h2>
+            
+            <div class="grid grid-cols-2 gap-4">
+                <div class="bg-slate-800/50 p-4 rounded-xl border border-slate-700/50">
+                    <span class="block text-xs text-slate-400 uppercase tracking-wider">Candles Processados</span>
+                    <span class="text-xl font-mono font-bold text-blue-400">{{ resultado.total_candles }}</span>
+                </div>
+
+                <div class="bg-slate-800/50 p-4 rounded-xl border border-slate-700/50">
+                    <span class="block text-xs text-slate-400 uppercase tracking-wider">Tendência</span>
+                    <span class="text-xl font-bold {% if resultado.tendencia == 'Alta' %}text-emerald-400{% else %}text-rose-400{% endif %}">
+                        {{ resultado.tendencia }}
+                    </span>
+                </div>
+
+                <div class="bg-slate-800/50 p-4 rounded-xl border border-slate-700/50">
+                    <span class="block text-xs text-slate-400 uppercase tracking-wider">Abertura do Período</span>
+                    <span class="text-lg font-mono font-semibold">{{ resultado.abertura_inicial }} pts</span>
+                </div>
+
+                <div class="bg-slate-800/50 p-4 rounded-xl border border-slate-700/50">
+                    <span class="block text-xs text-slate-400 uppercase tracking-wider">Fechamento do Período</span>
+                    <span class="text-lg font-mono font-semibold">{{ resultado.fechamento_final }} pts</span>
+                </div>
+            </div>
+
+            <div class="mt-4 p-4 rounded-xl text-center font-bold {% if resultado.variacao_pontos >= 0 %}bg-emerald-950/40 text-emerald-300 border border-emerald-500/30{% else %}bg-rose-950/40 text-rose-300 border border-rose-500/30{% endif %}">
+                Saldo do Período: {{ resultado.variacao_pontos }} pontos
+            </div>
+        </div>
+        {% elif resultado == None and request.method == 'POST' %}
+        <p class="text-center text-rose-400 font-medium">Nenhum dado encontrado para o período ou falha na API do Yahoo.</p>
+        {% endif %}
+    </div>
+
+</body>
+</html>
