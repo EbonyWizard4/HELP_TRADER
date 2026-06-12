@@ -1,10 +1,7 @@
 from flask import Flask, render_template, request, Blueprint
 # importando modulos especializados.
-from core.services.market_data import buscar_dados_mercado
-from core.trading.indicator import calcula_mme9
-from core.trading.setup_91 import executar_backtest_91
-
-from core.analizador import analisar_mini_indice
+from core.services.market_data import ProvedorYahoo
+from core.trading import obter_estrategia
 
 # Blueprint main
 main_bp = Blueprint('main', __name__)
@@ -12,15 +9,21 @@ main_bp = Blueprint('main', __name__)
 @main_bp.route('/', methods=['GET', 'POST'])
 def index():
     dados = None
+    setup_selecionado = "9.1" # Padrão inicial.
 
     if request.method == 'POST':
+        # Capturar o setup selecionado pelo usuário.
+        setup_selecionado = request.form.get('setup', '9.1')
+
+        # Inversão da dependencia (DPI) - Instanciando o provedor pela interface.
+        provedor = ProvedorYahoo()
         # 1. Buscar os dados do mercado (infra estrutura)
-        df_bruto = buscar_dados_mercado(dias=30)
+        df_bruto = provedor.obter_dados_intraday(ativo='^BVSP', dias=30)  
 
-        # 2. Calcular os indicadores (matemática)
-        df_com_indicadores = calcula_mme9(df_bruto)
+        # Principio do aberto/fechado (OCP) - Buscar a estratégia pelo catalogo.
+        estrategia = obter_estrategia(setup_selecionado)
 
-        # 3. Executar o backtest do setup 91 (lógica de trading)
-        dados = executar_backtest_91(df_com_indicadores)
+        # Executar o backtest da estratégia sem saber as regras internas, apenas a interface.
+        dados = estrategia.executar(df_bruto)
 
-    return render_template('index.html', resultado=dados)
+    return render_template('index.html', resultado=dados, setup=setup_selecionado)
