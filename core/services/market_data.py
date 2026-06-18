@@ -1,8 +1,11 @@
+'''core/services/market_data.py - Implementa o provedor de dados de mercado utilizando a biblioteca yfinance para acessar dados do Yahoo Finance.'''
 from datetime import datetime, timedelta
 import yfinance as yf
 import pandas as pd
+# 1. Trocamos o import para a interface correta de Dados
 from core.trading.base import ProvedorDados
 
+# 2. Fazemos a classe herdar de ProvedorDados
 class ProvedorYahoo(ProvedorDados):
     """Provedor de dados de mercado utilizando a biblioteca yfinance para acessar dados do Yahoo Finance."""
 

@@ -1,9 +1,9 @@
 import pandas as pd
-from core.trading.base import EstrategiaTrading
+from core.trading.base import FiltroSinal
 from core.trading.indicator import calcula_mme9
-from core.trading.setup_91 import Setup91
+from core.trading.sinais_91 import Sinal91
 
-class Setup92(Setup91):
+class Setup92(Sinal91):
     """ Implementação do setup 92 de Compra do Lary Willians. """
 
     def executar(self, df: pd.DataFrame) -> dict:

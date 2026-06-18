@@ -1,11 +1,12 @@
-from core.trading.setup_91 import Setup91
-from core.trading.setup_92 import Setup92
-
-# Um catálogo de estratégias mapeadas por uma string simples
-ESTRATEGIAS = {
-    "9.1": Setup91(),
-    "9.2": Setup92()
-}
+"""core/trading/__init__.py: Fábrica que mapeia os sinais da tela e entrega o motor configurado."""
+from core.trading.motor import MotorBacktest
+from core.trading.sinais_91 import Sinal91  # Adapte o nome do seu arquivo de sinal se necessário
 
 def obter_estrategia(nome: str):
-    return ESTRATEGIAS.get(nome, Setup91())
+    """Monta o Motor de Backtest com os filtros selecionados na tela."""
+    if nome == "9.1":
+        # Retorna o Motor contendo apenas o filtro do 9.1
+        return MotorBacktest(filtros=[Sinal91()])
+    
+    # Se não mapear nada, devolve o motor padrão com 9.1
+    return MotorBacktest(filtros=[Sinal91()])
