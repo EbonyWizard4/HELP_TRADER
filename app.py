@@ -1,17 +1,9 @@
-from flask import Flask, render_template, request, redirect, url_for
-from analizador import analisar_mini_indice
+from core import create_app
 
-app = Flask(__name__)
+# Liga a fabrica e pega a instancia da aplicação
+app = create_app()
 
-@app.route('/', methods=['GET', 'POST'])
-def index():
-    dados_analise = None
-
-    if request.method == 'POST':
-        # Quando o botão for clicado, executa a função de análise
-        dados_analise = analisar_mini_indice()
-    return render_template('index.html', resultado=dados_analise)
-
+# Roda a aplicação localmente
 if __name__ == '__main__':
-    # roda o servidor em modo de desenvolvimento
-    app.run(debug=True)
+    # Roda a aplicação em modo debug
+    app.run(debug=True) 

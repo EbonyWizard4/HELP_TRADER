@@ -1,0 +1,25 @@
+Help_trader/               # <--- RAIZ DO REPOSITÓRIO
+│
+├── .git/                  # (Oculto) Controle de versão (Fica na raiz!)
+├── .gitignore             # Arquivo que ignora a venv (Fica na raiz!)
+├── README.md              # Documentação principal do projeto
+├── requirements.txt       # Dependências do projeto (Flask, yfinance, Pandas)
+├── app.py                 # Ponto de entrada que liga a fábrica
+│
+├── docs/                  # 📂 IMAGENS DA DOCUMENTAÇÃO
+│   └── images/            # Prints da tela e diagramas para o README
+│
+└── core/                  # 📂 CORAÇÃO DA APLICAÇÃO (CÓDIGO-FONTE)
+    ├── __init__.py        # Application Factory
+    ├── routes.py          # Rotas com Blueprints
+    │
+    ├── templates/         # Seus arquivos HTML (index.html)
+    ├── static/            # 📂 IMAGENS E ATIVOS DO SISTEMA
+    │   └── images/        # Ícones ou logos que aparecem no HTML
+    │
+    ├── services/          # 🧠 SOLID: Camada de Infraestrutura / I/O
+    │   └── market_data.py # Só ele conhece o Yahoo Finance e traz o DataFrame
+    │
+    └── trading/           # 🧠 SOLID: Camada de Regra de Negócio
+        ├── indicators.py  # Só calcula indicadores matemáticos (MME9)
+        └── setup_91.py    # Só aplica a regra de compra/venda do 9.1
