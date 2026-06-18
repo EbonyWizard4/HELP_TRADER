@@ -11,17 +11,14 @@
 <body class="bg-slate-900 text-slate-100 font-sans min-h-screen flex flex-col items-center justify-center p-6">
 
     <div class="w-full max-w-xl bg-slate-800 p-8 rounded-2xl shadow-2xl border border-slate-700">
-        <!-- Cabeçalho -->
         <h1
             class="text-3xl font-extrabold text-center mb-2 bg-gradient-to-r from-blue-400 to-emerald-400 bg-clip-text text-transparent">
             Analisador de Dados Intraday
         </h1>
         <p class="text-slate-400 text-center text-sm mb-8">Mini Índice (WIN=F) • Janela de 30 dias (Intervalo 5m)</p>
         
-        <!-- Configuração -->
-        <form method="POST" class="space-y-4 mb-8">
+        <form id="form-analise" method="POST" class="space-y-4 mb-8">
 
-            <!-- Seletor de estratégia -->
             <div class="flex justify-between items-center bg-slate-900 border border-slate-700 rounded-xl p-4">
                 <div class="text-sm">
                     <span class="block text-slate-400 text-xs font-semibold uppercase tracking-wider">Configuração
@@ -35,13 +32,22 @@
                 </button>
             </div>
 
-            <!-- Botão de início -->
-            <button type="submit"
-                class="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold px-8 py-3 rounded-xl transition-all transform hover:scale-[1.01] active:scale-[0.99] shadow-lg shadow-blue-600/30">
-                Iniciar Análise Histórica
-            </button>
+            <div class="{% if resultado %}grid grid-cols-1 sm:grid-cols-2 gap-4{% else %}w-full{% endif %}">
+                
+                <button type="submit"
+                    class="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold px-6 py-3 rounded-xl transition-all transform hover:scale-[1.01] active:scale-[0.99] shadow-lg shadow-blue-600/30">
+                    Iniciar Análise
+                </button>
 
-            <!-- Modal de configuração -->
+                {% if resultado %}
+                <button type="button" onclick="dispararDownloadPDF()"
+                    class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold px-6 py-3 rounded-xl transition-all transform hover:scale-[1.01] active:scale-[0.99] shadow-lg shadow-emerald-600/30 flex items-center justify-center gap-2">
+                    📄 Baixar Relatório
+                </button>
+                {% endif %}
+
+            </div>
+
             <div id="modal-config"
                 class="hidden fixed inset-0 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4 z-50">
                 <div
@@ -61,7 +67,7 @@
                             class="flex items-center gap-3 bg-slate-900/50 p-3 rounded-xl border border-slate-700 cursor-pointer hover:border-slate-600">
                             <input type="checkbox" name="setups" value="9.1"
                                 class="w-4 h-4 rounded text-blue-600 focus:ring-blue-500 bg-slate-800 border-slate-700"
-                                checked>
+                                {% if not setups or '9.1' in setups %}checked{% endif %}>
                             <div>
                                 <span class="block text-sm font-medium text-slate-200">Setup 9.1</span>
                                 <span class="block text-xs text-slate-400">Virada da Média Móvel Exponencial de 9
@@ -72,7 +78,8 @@
                         <label
                             class="flex items-center gap-3 bg-slate-900/50 p-3 rounded-xl border border-slate-700 cursor-pointer hover:border-slate-600">
                             <input type="checkbox" name="setups" value="candle_forca"
-                                class="w-4 h-4 rounded text-blue-600 focus:ring-blue-500 bg-slate-800 border-slate-700">
+                                class="w-4 h-4 rounded text-blue-600 focus:ring-blue-500 bg-slate-800 border-slate-700"
+                                {% if setups and 'candle_forca' in setups %}checked{% endif %}>
                             <div>
                                 <span class="block text-sm font-medium text-slate-200">Candle de Força</span>
                                 <span class="block text-xs text-slate-400">Filtra apenas barras com corpo maior que a
@@ -87,10 +94,15 @@
                             de Risco (Alvo/Stop)</label>
                         <select name="risco" id="risco"
                             class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-slate-100 font-medium focus:outline-none focus:border-blue-500">
-                            <option value="1.5">Alvo de 1.5x o Risco</option>
-                            <option value="2.0" selected>Alvo de 2.0x o Risco (Padrão)</option>
-                            <option value="3.0">Alvo de 3.0x o Risco</option>
+                            <option value="1.5" {% if risco == '1.5' %}selected{% endif %}>Alvo de 1.5x o Risco</option>
+                            <option value="2.0" {% if not risco or risco == '2.0' %}selected{% endif %}>Alvo de 2.0x o Risco (Padrão)</option>
+                            <option value="3.0" {% if risco == '3.0' %}selected{% endif %}>Alvo de 3.0x o Risco</option>
                         </select>
+                    </div>
+
+                    <div class="mb-6">
+                        <label for="resumo" class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">Notas do Experimento (Vai para o PDF)</label>
+                        <textarea name="resumo" id="resumo" rows="2" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2 text-slate-100 text-sm focus:outline-none focus:border-blue-500 resize-none" placeholder="Digite insights ou lições aprendidas..."></textarea>
                     </div>
 
                     <button type="button" onclick="atualizarTextoEFechar()"
@@ -102,7 +114,8 @@
 
         </form>
 
-        <!-- Modal de configuração -->
+        <form id="form-pdf" action="/exportar" method="POST" class="hidden"></form>
+
         <script>
             function toggleModal(open) {
                 const modal = document.getElementById('modal-config');
@@ -114,7 +127,6 @@
             }
 
             function atualizarTextoEFechar() {
-                // Atualiza o texto amigável na tela principal informando o que está ativo
                 const checkboxes = document.querySelectorAll('input[name="setups"]:checked');
                 const ativos = Array.from(checkboxes).map(cb => cb.value.toUpperCase()).join(' + ');
                 const risco = document.getElementById('risco').value;
@@ -123,7 +135,40 @@
                 toggleModal(false);
             }
 
-            // Executa uma vez ao carregar a página para alinhar o texto
+            function dispararDownloadPDF() {
+                const formPdf = document.getElementById('form-pdf');
+                formPdf.innerHTML = ''; // Limpa envios anteriores
+
+                // Clona as caixas de seleção ativas para dentro do form do PDF
+                const checkboxes = document.querySelectorAll('input[name="setups"]:checked');
+                checkboxes.forEach(cb => {
+                    const input = document.createElement('input');
+                    input.type = 'hidden';
+                    input.name = 'setups';
+                    input.value = cb.value;
+                    formPdf.appendChild(input);
+                });
+
+                // Clona o risco selecionado
+                const risco = document.getElementById('risco').value;
+                const inputRisco = document.createElement('input');
+                inputRisco.type = 'hidden';
+                inputRisco.name = 'risco';
+                inputRisco.value = risco;
+                formPdf.appendChild(inputRisco);
+
+                // Clona o texto de notas/resumo
+                const resumo = document.getElementById('resumo').value;
+                const inputResumo = document.createElement('input');
+                inputResumo.type = 'hidden';
+                inputResumo.name = 'resumo';
+                inputResumo.value = resumo;
+                formPdf.appendChild(inputResumo);
+
+                // Dispara o download em background
+                formPdf.submit();
+            }
+
             window.onload = atualizarTextoEFechar;
         </script>
 
@@ -145,8 +190,7 @@
                 </div>
             </div>
 
-            <h2 class="text-xl font-bold text-slate-300 mb-4 border-t border-slate-700/50 pt-4">Desempenho do Setup 9.1
-                (Compra):</h2>
+            <h2 class="text-xl font-bold text-slate-300 mb-4 border-t border-slate-700/50 pt-4">Desempenho Combinado (Compra):</h2>
 
             <div class="grid grid-cols-3 gap-3">
                 <div class="bg-slate-800/50 p-3 rounded-xl border border-slate-700/50 text-center">
@@ -164,8 +208,7 @@
             </div>
 
             <div class="mt-4 p-4 rounded-xl text-center font-bold bg-slate-900 border border-blue-500/30">
-                Taxa de Acerto do Setup: <span class="text-blue-400 font-mono text-xl">{{ resultado.taxa_acerto
-                    }}%</span>
+                Taxa de Acerto do Setup: <span class="text-blue-400 font-mono text-xl">{{ resultado.taxa_acerto }}%</span>
             </div>
         </div>
         {% endif %}
