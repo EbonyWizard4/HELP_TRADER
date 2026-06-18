@@ -1,7 +1,7 @@
 # core/trading/sinais_cf.py
 from core.trading.base import FiltroSinal
 
-class SinalCandleForca(FiltroSinal):
+class SinalCF(FiltroSinal):
     def tem_sinal_compra(self, df, idx) -> bool:
         # Lógica pura se o candle anterior foi uma barra de força
         corpo_anterior = df['corpo'].iloc[idx-1].item()
