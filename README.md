@@ -1,7 +1,7 @@
 # HELP_TRADER
 
 Ferramenta de apoio a analise gráfica para validar estratégias daytrade.
-![Tela de analise](docs/images/Captura_2026-06-18.png)
+![Tela de analise](docs/images/Tela_V2.png)
 
 ## 📋 Sobre o Projeto
 
@@ -18,6 +18,7 @@ Validar e analisar estratégias de day trading customizadas através de uma inte
 - **Combinar estratégias**: Possibilitar utilização de varias estratégias em conjunto (aumento da acertividade)
 - **Analise quantitativa**: Analizar relação Gain Loss no período.
 - **Relatório PDF**: Emitir relatório para registro de evolução das estratégias. [Relatórios](docs/Relatórios)
+- **Analise de Payoff**: Exibição de pontos para analise de lucro ou prejuízo no período.
 
 ## 🛠️ Tecnologia
 
