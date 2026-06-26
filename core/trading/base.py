@@ -9,6 +9,11 @@ class FiltroSinal(ABC):
     def tem_sinal_compra(self, df: pd.DataFrame, idx: int) -> bool:
         """Retorna True se o setup autoriza a compra no candle de índice 'idx'."""
         pass
+    
+    @abstractmethod
+    def tem_sinal_venda(self, df: pd.DataFrame, idx: int) -> bool:
+        """Retorna True se o setup autoriza a venda a descoberto no candle 'idx'."""
+        pass
 
 
 class ProvedorDados(ABC):

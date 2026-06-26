@@ -139,6 +139,12 @@ class GeradorRelatorioPDF:
                         <td><strong>Taxa de Acerto Final</strong></td>
                         <td class="destaque" style="font-size: 14px;">{resultados['taxa_acerto']}%</td>
                     </tr>
+                    <tr style="background-color: #f8fafc;">
+                        <td><strong>Saldo Final Acumulado</strong></td>
+                        <td class="{'gain' if resultados['saldo_estrategia'] >= 0 else 'loss'}" style="font-size: 14px;">
+                            {'+' if resultados['saldo_estrategia'] >= 0 else ''}{resultados['saldo_estrategia']} pts
+                        </td>
+                    </tr>
                 </tbody>
             </table>
 
