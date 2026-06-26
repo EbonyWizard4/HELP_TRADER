@@ -11,6 +11,14 @@ Ferramenta de apoio a analise gráfica para validar estratégias daytrade.
 
 Validar e analisar estratégias de day trading customizadas através de uma interface gráfica intuitiva e ferramentas de análise técnica.
 
+## 📈 Evolução
+
+- **Busca de dados**: Extrair dados da bolsa de valores.
+- **Aplicar estrategias de trayde**: Utilizar estratégias renomadas como gatilho de entrada das operações.
+- **Combinar estratégias**: Possibilitar utilização de varias estratégias em conjunto (aumento da acertividade)
+- **Analise quantitativa**: Analizar relação Gain Loss no período.
+- **Relatório PDF**: Emitir relatório para registro de evolução das estratégias. [Relatórios](docs/Relatórios)
+
 ## 🛠️ Tecnologia
 
 - **Backend**: Python Flask
